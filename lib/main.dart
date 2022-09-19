@@ -50,6 +50,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  Offset _offset = Offset(0.4, 0.7);
 
   void _incrementCounter() {
     setState(() {
@@ -70,111 +71,34 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+    return Transform(
+      transform: Matrix4.identity()
+      ..setEntry(3, 2, 0.001)
+      ..rotateX(_offset.dy)
+      ..rotateY(_offset.dx),
+      alignment: FractionalOffset.center,
+      child: GestureDetector(
+        child: _defaultApp(context),
+        onPanUpdate: (details) => setState(() => _offset += details.delta),
+        onDoubleTap: () => setState (() => _offset = Offset.zero),
+      )
+      );
+  }
+
+  _defaultApp(BuildContext context){
+    return Scaffold(appBar: AppBar(title: Text('The Matrix 3D'),),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Hidayati Nur Chasanah'),
+          Text('$_counter', style: Theme.of(context).textTheme.displaySmall,),
+        ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            Transform.rotate(
-                angle: -45 * (pi / 180.0),
-                child: ElevatedButton(child: const Text("Rotated Button"),
-                onPressed: (){},),),
-            Transform(
-              transform: Matrix4.rotationZ(-45 * (pi / 180.0)),
-              alignment: Alignment.center,
-              child: ElevatedButton(
-                child: const Text("Rotated button"),
-                onPressed: () {},
-              ),
-            ),
-            Transform.scale(
-              scale: 2.0,
-              child: ElevatedButton(
-                child: const Text("scaled up"),
-                onPressed: () {},
-              ),
-            ),
-            Transform(
-              transform: Matrix4.identity()..scale(2.0, 2.0),
-              alignment: Alignment.center,
-              child: ElevatedButton(
-                child: const Text("scaled up (matrix)"),
-                onPressed: () {},
-              ),
-            ),
-            Transform.translate(
-              offset: const Offset(100, 300),
-              child: ElevatedButton(
-                child: const Text("translated to bottom"),
-                onPressed: () {},
-              ),
-            ),
-            Transform(
-              transform: Matrix4.translationValues(100, 300, 0),
-              child: ElevatedButton(
-                child: const Text("translated to bottom (matrix)"),
-                onPressed: () {},
-              ),
-            ),
-            Transform.translate(
-              offset: const Offset(70, 200),
-              child: Transform.rotate(
-                angle: -45 * (pi / 180.0),
-                child: Transform.scale(
-                  scale: 2.0,
-                  child: ElevatedButton(
-                    child: const Text("multiple transformations"),
-                    onPressed: () {},
-                  ),
-                ),
-              ),
-            ),
-            Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.translationValues(70, 200, 0)
-                ..rotateZ(-45 * (pi / 180.0))
-                ..scale(2.0, 2.0),
-              child: ElevatedButton(
-                child: const Text("multiple transformations (matrix)"),
-                onPressed: () {},
-              ),
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    ),
+    floatingActionButton: FloatingActionButton(onPressed: _incrementCounter,
+    tooltip: 'Increment',
+    child: Icon(Icons.add),),
     );
   }
 }
